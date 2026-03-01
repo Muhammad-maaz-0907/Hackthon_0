@@ -1,0 +1,27 @@
+{
+  "enabled": true,
+  "business_hours_only": false,
+  "business_hours": {
+    "start": 9,
+    "end": 17
+  },
+  "delay_seconds": 3,
+  "max_replies_per_chat_per_hour": 5,
+  "exclude_groups": true,
+  "keywords": {
+    "hello": "Hello! 👋 Thanks for reaching out. This is an automated response. I'll get back to you soon!",
+    "hi": "Hi there! 👋 Thanks for your message. I'll respond as soon as possible!",
+    "hey": "Hey! 👋 Got your message. I'll reply shortly!",
+    "urgent": "⚡ I see this is urgent. I'll prioritize your message and respond ASAP!",
+    "help": "🆘 I received your help request. Someone will assist you shortly!",
+    "pricing": "💰 Thanks for your interest in pricing. I'll send you detailed information soon!",
+    "invoice": "📄 Invoice request received. I'll process this and get back to you!",
+    "payment": "💳 Payment inquiry noted. I'll respond with details shortly!",
+    "default": "Thanks for your message! 🙏 This is an automated reply. I'll respond properly soon!"
+  },
+  "custom_responses": {
+    "hours": "🕐 Our business hours are 9 AM - 5 PM. I'll respond during business hours!",
+    "out_of_office": "📴 I'm currently away. I'll respond when I'm back online!",
+    "busy": "⏳ I'm currently busy but will respond as soon as possible!"
+  }
+}

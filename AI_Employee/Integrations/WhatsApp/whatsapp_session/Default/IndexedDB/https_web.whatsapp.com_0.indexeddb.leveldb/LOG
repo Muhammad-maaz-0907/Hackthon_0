@@ -1,0 +1,83 @@
+2026/02/26-00:17:12.632 274 Reusing MANIFEST D:\Hacthon 0\AI_Employee_Vault\AI_Employee\Integrations\WhatsApp\whatsapp_session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/02/26-00:17:12.651 274 Recovering log #522
+2026/02/26-00:17:12.687 274 Reusing old log D:\Hacthon 0\AI_Employee_Vault\AI_Employee\Integrations\WhatsApp\whatsapp_session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000522.log 
+2026/02/26-00:17:26.451 1bdc Level-0 table #530: started
+2026/02/26-00:17:26.491 1bdc Level-0 table #530: 1197366 bytes OK
+2026/02/26-00:17:26.496 1bdc Delete type=0 #522
+2026/02/26-00:17:26.759 274 Compacting 1@1 + 6@2 files
+2026/02/26-00:17:26.903 274 Generated table #531@1: 71748 keys, 2240044 bytes
+2026/02/26-00:17:27.025 274 Generated table #532@1: 49997 keys, 2222604 bytes
+2026/02/26-00:17:27.106 274 Generated table #533@1: 17480 keys, 2210471 bytes
+2026/02/26-00:17:27.203 274 Generated table #534@1: 31045 keys, 2178785 bytes
+2026/02/26-00:17:27.210 274 Generated table #535@1: 365 keys, 47468 bytes
+2026/02/26-00:17:27.211 274 Compacted 1@1 + 6@2 files => 8899372 bytes
+2026/02/26-00:17:27.214 274 compacted to: files[ 0 0 6 0 0 0 0 ]
+2026/02/26-00:17:27.798 d34 Level-0 table #537: started
+2026/02/26-00:17:27.833 d34 Level-0 table #537: 1129994 bytes OK
+2026/02/26-00:17:27.838 d34 Delete type=2 #395
+2026/02/26-00:17:27.838 d34 Delete type=2 #496
+2026/02/26-00:17:27.839 d34 Delete type=2 #524
+2026/02/26-00:17:27.839 d34 Delete type=2 #525
+2026/02/26-00:17:27.839 d34 Delete type=2 #526
+2026/02/26-00:17:27.839 d34 Delete type=2 #527
+2026/02/26-00:17:27.839 d34 Delete type=0 #529
+2026/02/26-00:17:27.839 d34 Delete type=2 #530
+2026/02/26-00:17:28.087 1bdc Compacting 1@1 + 6@2 files
+2026/02/26-00:17:28.229 1bdc Generated table #538@1: 71772 keys, 2215883 bytes
+2026/02/26-00:17:28.356 1bdc Generated table #539@1: 49362 keys, 2239522 bytes
+2026/02/26-00:17:28.431 1bdc Generated table #540@1: 19236 keys, 2185235 bytes
+2026/02/26-00:17:28.692 1bdc Generated table #541@1: 28415 keys, 2174434 bytes
+2026/02/26-00:17:28.705 1bdc Generated table #542@1: 3155 keys, 195420 bytes
+2026/02/26-00:17:28.705 1bdc Compacted 1@1 + 6@2 files => 9010494 bytes
+2026/02/26-00:17:28.709 1bdc compacted to: files[ 0 0 5 0 0 0 0 ]
+2026/02/26-00:17:28.709 1bdc Delete type=0 #529
+2026/02/26-00:17:32.419 296c Level-0 table #544: started
+2026/02/26-00:17:32.459 296c Level-0 table #544: 1273562 bytes OK
+2026/02/26-00:17:32.464 296c Delete type=2 #376
+2026/02/26-00:17:32.464 296c Delete type=2 #531
+2026/02/26-00:17:32.465 296c Delete type=2 #532
+2026/02/26-00:17:32.465 296c Delete type=2 #533
+2026/02/26-00:17:32.465 296c Delete type=2 #534
+2026/02/26-00:17:32.465 296c Delete type=2 #535
+2026/02/26-00:17:32.465 296c Delete type=0 #536
+2026/02/26-00:17:32.465 296c Delete type=2 #537
+2026/02/26-00:17:32.627 1bdc Level-0 table #546: started
+2026/02/26-00:17:32.661 1bdc Level-0 table #546: 1139262 bytes OK
+2026/02/26-00:17:32.666 1bdc Delete type=0 #543
+2026/02/26-00:17:32.829 274 Compacting 1@1 + 5@2 files
+2026/02/26-00:17:32.979 274 Generated table #547@1: 70659 keys, 2214874 bytes
+2026/02/26-00:17:33.022 274 Level-0 table #550: started
+2026/02/26-00:17:33.055 274 Level-0 table #550: 1173003 bytes OK
+2026/02/26-00:17:33.061 274 Delete type=0 #545
+2026/02/26-00:17:33.172 274 Generated table #548@1: 50659 keys, 2243985 bytes
+2026/02/26-00:17:33.251 274 Generated table #551@1: 20219 keys, 2186588 bytes
+2026/02/26-00:17:33.336 274 Generated table #552@1: 26564 keys, 2170578 bytes
+2026/02/26-00:17:33.354 274 Generated table #553@1: 5594 keys, 322719 bytes
+2026/02/26-00:17:33.354 274 Compacted 1@1 + 5@2 files => 9138744 bytes
+2026/02/26-00:17:33.359 274 compacted to: files[ 2 0 5 0 0 0 0 ]
+2026/02/26-00:17:33.360 274 Delete type=2 #538
+2026/02/26-00:17:33.360 274 Delete type=2 #539
+2026/02/26-00:17:33.360 274 Delete type=2 #540
+2026/02/26-00:17:33.360 274 Delete type=2 #541
+2026/02/26-00:17:33.360 274 Delete type=2 #542
+2026/02/26-00:17:33.360 274 Delete type=2 #544
+2026/02/26-00:17:33.596 274 Compacting 2@0 + 0@1 files
+2026/02/26-00:17:33.662 274 Generated table #554@0: 20953 keys, 509660 bytes
+2026/02/26-00:17:33.662 274 Compacted 2@0 + 0@1 files => 509660 bytes
+2026/02/26-00:17:33.667 274 compacted to: files[ 0 1 5 0 0 0 0 ]
+2026/02/26-00:17:41.080 1bdc Compacting 1@1 + 5@2 files
+2026/02/26-00:17:41.569 1bdc Generated table #555@1: 67733 keys, 2212100 bytes
+2026/02/26-00:17:41.779 1bdc Generated table #556@1: 52696 keys, 2245323 bytes
+2026/02/26-00:17:41.885 1bdc Generated table #557@1: 21455 keys, 2184429 bytes
+2026/02/26-00:17:41.984 1bdc Generated table #558@1: 26530 keys, 2175917 bytes
+2026/02/26-00:17:42.007 1bdc Generated table #559@1: 6668 keys, 416912 bytes
+2026/02/26-00:17:42.007 1bdc Compacted 1@1 + 5@2 files => 9234681 bytes
+2026/02/26-00:17:42.011 1bdc compacted to: files[ 0 0 5 0 0 0 0 ]
+2026/02/26-00:17:42.011 1bdc Delete type=2 #546
+2026/02/26-00:17:42.012 1bdc Delete type=2 #547
+2026/02/26-00:17:42.012 1bdc Delete type=2 #548
+2026/02/26-00:17:42.012 1bdc Delete type=2 #550
+2026/02/26-00:17:42.012 1bdc Delete type=2 #551
+2026/02/26-00:17:42.012 1bdc Delete type=2 #552
+2026/02/26-00:17:42.013 1bdc Delete type=2 #553
+2026/02/26-00:17:42.013 1bdc Delete type=2 #554

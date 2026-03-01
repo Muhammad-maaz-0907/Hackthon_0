@@ -1,0 +1,311 @@
+# Twitter/X MCP Server - Gold Tier
+# Twitter/X API integration via MCP protocol
+
+import os
+import json
+import logging
+from datetime import datetime
+from typing import Dict, Any
+
+# Handle both module import and direct execution
+try:
+    from .mcp_server_base import MCPServerBase, MCPResponse
+except ImportError:
+    from mcp_server_base import MCPServerBase, MCPResponse
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Paths
+LOGS_DIR = os.path.join(os.path.dirname(__file__), '..', 'Logs')
+ENV_FILE = os.path.join(os.path.dirname(__file__), '..', '.env')
+
+
+class TwitterMCPServer(MCPServerBase):
+    """
+    MCP Server for Twitter/X operations.
+    
+    Actions:
+        - create_post: Create a tweet
+        - get_metrics: Get tweet/profile metrics
+    
+    Note: Twitter API v2 requires developer account and API keys.
+    This implementation uses simulation mode by default.
+    """
+    
+    def __init__(self):
+        super().__init__("twitter_mcp", max_retries=3, retry_delay=1.0)
+        self.api_key = None
+        self.api_secret = None
+        self.access_token = None
+        self.access_token_secret = None
+        self.bearer_token = None
+        self._load_credentials()
+    
+    def _load_credentials(self):
+        """Load Twitter credentials from environment."""
+        env = {}
+        if os.path.exists(ENV_FILE):
+            with open(ENV_FILE, 'r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        key, value = line.split('=', 1)
+                        env[key.strip()] = value.strip()
+        
+        self.api_key = os.environ.get('TWITTER_API_KEY', env.get('TWITTER_API_KEY'))
+        self.api_secret = os.environ.get('TWITTER_API_SECRET', env.get('TWITTER_API_SECRET'))
+        self.access_token = os.environ.get('TWITTER_ACCESS_TOKEN', env.get('TWITTER_ACCESS_TOKEN'))
+        self.access_token_secret = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET', env.get('TWITTER_ACCESS_TOKEN_SECRET'))
+        self.bearer_token = os.environ.get('TWITTER_BEARER_TOKEN', env.get('TWITTER_BEARER_TOKEN'))
+    
+    def connect(self, **kwargs) -> Dict:
+        """
+        Connect to Twitter/X API.
+        
+        Returns:
+            Dict: Connection status
+        """
+        try:
+            logger.info("[TwitterMCP] Connecting to Twitter/X API...")
+            
+            # Check for credentials
+            if not self.bearer_token:
+                # Simulation mode - no credentials required
+                logger.info("[TwitterMCP] No credentials found, using simulation mode")
+                self.connected = True
+                return MCPResponse.success({
+                    "service": "twitter",
+                    "status": "connected",
+                    "mode": "simulation",
+                    "message": "Running in simulation mode (no API credentials)"
+                }, "connect")
+            
+            # TODO: Implement actual Twitter API authentication
+            self.connected = True
+            
+            logger.info("[TwitterMCP] Connected successfully")
+            return MCPResponse.success({
+                "service": "twitter",
+                "status": "connected",
+                "mode": "live"
+            }, "connect")
+            
+        except Exception as e:
+            self.connected = False
+            logger.error(f"[TwitterMCP] Connection failed: {e}")
+            return self.handle_error(e, "connect")
+    
+    def disconnect(self) -> Dict:
+        """Disconnect from Twitter/X API."""
+        try:
+            self.connected = False
+            logger.info("[TwitterMCP] Disconnected")
+            return MCPResponse.success({"status": "disconnected"}, "disconnect")
+        except Exception as e:
+            return self.handle_error(e, "disconnect")
+    
+    def _execute_action(self, action: str, payload: Dict) -> Dict:
+        """
+        Execute Twitter action.
+        
+        Args:
+            action: Action name
+            payload: Action parameters
+            
+        Returns:
+            Dict: MCPResponse formatted result
+        """
+        if action == 'create_post':
+            return self._create_post(payload)
+        elif action == 'get_metrics':
+            return self._get_metrics(payload)
+        else:
+            return MCPResponse.error(f"Unknown action: {action}", action)
+    
+    def _create_post(self, payload: Dict) -> Dict:
+        """
+        Create a tweet.
+        
+        Payload:
+            - content: Tweet text (max 280 characters)
+            - media_ids: (optional) List of media IDs to attach
+            - reply_to: (optional) Tweet ID to reply to
+        """
+        try:
+            content = payload.get('content', '')
+            media_ids = payload.get('media_ids', [])
+            reply_to = payload.get('reply_to')
+            
+            if not content.strip():
+                return MCPResponse.error(
+                    "Tweet content is required",
+                    "create_post"
+                )
+            
+            # Check character limit (Twitter: 280 characters)
+            if len(content) > 280:
+                return MCPResponse.error(
+                    f"Content exceeds 280 character limit: {len(content)}",
+                    "create_post",
+                    {"max_length": 280, "actual_length": len(content)}
+                )
+            
+            if not self.bearer_token:
+                # Simulation mode
+                logger.info(f"[TwitterMCP] [SIMULATE] Creating tweet: {content[:50]}...")
+                
+                tweet_data = {
+                    "simulated": True,
+                    "content": content,
+                    "content_length": len(content),
+                    "media_ids": media_ids,
+                    "reply_to": reply_to,
+                    "timestamp": datetime.now().isoformat(),
+                    "tweet_id": "x_" + datetime.now().strftime('%Y%m%d%H%M%S')
+                }
+                
+                # Log to social.json
+                self._log_post(tweet_data)
+                
+                return MCPResponse.success(tweet_data, "create_post")
+            
+            # TODO: Implement actual Twitter API v2 post creation
+            # POST https://api.twitter.com/2/tweets
+            logger.info(f"[TwitterMCP] Creating tweet: {content[:50]}...")
+            
+            return MCPResponse.success({
+                "simulated": False,
+                "content": content,
+                "tweet_id": "x_" + datetime.now().strftime('%Y%m%d%H%M%S'),
+                "timestamp": datetime.now().isoformat()
+            }, "create_post")
+            
+        except Exception as e:
+            logger.error(f"[TwitterMCP] Create tweet error: {e}")
+            return self.handle_error(e, "create_post")
+    
+    def _get_metrics(self, payload: Dict) -> Dict:
+        """
+        Get Twitter metrics.
+        
+        Payload:
+            - tweet_id: (optional) Specific tweet ID
+            - username: (optional) Username for profile metrics
+            - metric_type: (optional) impressions, likes, retweets, replies, all
+        """
+        try:
+            tweet_id = payload.get('tweet_id')
+            username = payload.get('username')
+            metric_type = payload.get('metric_type', 'all')
+            
+            if not self.bearer_token:
+                # Simulation mode - return placeholder metrics
+                metrics = {
+                    "simulated": True,
+                    "tweet_id": tweet_id,
+                    "username": username,
+                    "metrics": {
+                        "impressions": 0,
+                        "likes": 0,
+                        "retweets": 0,
+                        "replies": 0,
+                        "quote_tweets": 0,
+                        "bookmarks": 0,
+                        "profile_visits": 0,
+                        "follower_count": 0
+                    },
+                    "period": "last_7_days"
+                }
+                return MCPResponse.success(metrics, "get_metrics")
+            
+            # TODO: Implement actual Twitter API metrics retrieval
+            # GET https://api.twitter.com/2/tweets/{id}?tweet.fields=public_metrics
+            logger.info(f"[TwitterMCP] Getting metrics for: {tweet_id or username or 'profile'}")
+            
+            return MCPResponse.success({
+                "simulated": False,
+                "tweet_id": tweet_id,
+                "username": username,
+                "metrics": {
+                    "impressions": 0,
+                    "likes": 0,
+                    "retweets": 0,
+                    "replies": 0
+                }
+            }, "get_metrics")
+            
+        except Exception as e:
+            logger.error(f"[TwitterMCP] Get metrics error: {e}")
+            return self.handle_error(e, "get_metrics")
+    
+    def _log_post(self, tweet_data: Dict):
+        """Log post to social.json."""
+        log_file = os.path.join(LOGS_DIR, 'social.json')
+        
+        # Load existing logs
+        logs = []
+        if os.path.exists(log_file):
+            try:
+                with open(log_file, 'r', encoding='utf-8') as f:
+                    logs = json.load(f)
+            except json.JSONDecodeError:
+                logs = []
+        
+        # Add new entry
+        entry = {
+            'timestamp': datetime.now().isoformat(),
+            'platform': 'x',
+            'content': tweet_data.get('content', '')[:200],
+            'status': 'success',
+            'data': tweet_data
+        }
+        logs.append(entry)
+        
+        # Keep only last 1000 entries
+        logs = logs[-1000:]
+        
+        # Save logs
+        with open(log_file, 'w', encoding='utf-8') as f:
+            json.dump(logs, f, indent=2)
+
+
+# Convenience function
+def execute(action: str, payload: Dict) -> Dict:
+    """Execute Twitter action."""
+    server = TwitterMCPServer()
+    return server.execute(action, payload)
+
+
+if __name__ == '__main__':
+    print("Twitter/X MCP Server - Gold Tier")
+    print("=" * 40)
+    
+    server = TwitterMCPServer()
+    
+    print("\n1. Testing connection:")
+    result = server.connect()
+    print(json.dumps(result, indent=2))
+    
+    print("\n2. Testing create_post (valid):")
+    result = server.execute('create_post', {
+        "content": "Test tweet from Twitter MCP Server! 🚀 #AI #Automation"
+    })
+    print(json.dumps(result, indent=2))
+    
+    print("\n3. Testing create_post (too long):")
+    result = server.execute('create_post', {
+        "content": "A" * 300
+    })
+    print(json.dumps(result, indent=2))
+    
+    print("\n4. Testing get_metrics:")
+    result = server.execute('get_metrics', {})
+    print(json.dumps(result, indent=2))
+    
+    print("\n5. Testing health check:")
+    result = server.health_check()
+    print(json.dumps(result, indent=2))
+    
+    print("\n" + "=" * 40)

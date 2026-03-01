@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables
+.env
+*.env
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+Logs/
+
+# Credentials - DO NOT COMMIT
+**/credentials.json
+**/token.json
+**/client_secret*.json
+**/service_account*.json
+
+# Audit outputs (keep structure, not data)
+Audit/Weekly_Audit_Report.md
+Audit/CEO_Briefing.md
+
+# Task folders content (keep folders)
+Needs_Action/*
+!Needs_Action/.gitkeep
+Approved/*
+!Approved/.gitkeep
+Pending_Review/*
+!Pending_Review/.gitkeep
+Archive/*
+!Archive/.gitkeep
+
+# Config with sensitive data
+AI_Employee/config.json

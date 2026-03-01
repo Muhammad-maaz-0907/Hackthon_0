@@ -1,0 +1,28 @@
+[
+  {
+    "week": "2026-02-23",
+    "posts": {
+      "linkedin": [
+        {
+          "timestamp": "2026-02-24T16:03:53.424954",
+          "result": {
+            "status": "success",
+            "data": {
+              "simulated": true,
+              "content": "Test post from Marketing Skill! \ud83d\ude80 #AI #Automation",
+              "content_length": 49,
+              "image_url": null,
+              "visibility": "PUBLIC",
+              "timestamp": "2026-02-24T16:03:53.402552",
+              "post_id": "linkedin_20260224160353"
+            },
+            "error": null,
+            "action": "create_post",
+            "timestamp": "2026-02-24T16:03:53.403525"
+          }
+        }
+      ]
+    },
+    "created_at": "2026-02-24T16:03:53.424954"
+  }
+]

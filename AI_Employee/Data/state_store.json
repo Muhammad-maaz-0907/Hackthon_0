@@ -1,0 +1,65 @@
+{
+  "tasks": [
+    {
+      "description": "Post marketing update about our new AI features",
+      "metadata": {
+        "content": "Excited to announce our new AI-powered automation features! \ud83d\ude80 #AI #Innovation"
+      },
+      "priority": 2,
+      "source": "api",
+      "id": "task_20260224162156_0",
+      "status": "retrying",
+      "created_at": "2026-02-24T16:21:56.761731",
+      "retry_count": 1,
+      "max_retries": 3,
+      "started_at": "2026-02-24T16:21:56.830794",
+      "last_error": null,
+      "next_retry": "2026-02-24T16:21:56.836189"
+    },
+    {
+      "description": "Generate weekly CEO briefing",
+      "metadata": {
+        "period": 7
+      },
+      "priority": 3,
+      "source": "api",
+      "id": "task_20260224162156_1",
+      "status": "retrying",
+      "created_at": "2026-02-24T16:21:56.778835",
+      "retry_count": 1,
+      "max_retries": 3,
+      "started_at": "2026-02-24T16:21:56.945400",
+      "last_error": "Skill not found: ceo_briefing_skill",
+      "next_retry": "2026-02-24T16:21:57.001309"
+    },
+    {
+      "description": "Process unread emails and respond to inquiries",
+      "metadata": {
+        "auto_respond": true
+      },
+      "priority": 2,
+      "source": "api",
+      "id": "task_20260224162156_2",
+      "status": "retrying",
+      "created_at": "2026-02-24T16:21:56.800254",
+      "retry_count": 1,
+      "max_retries": 3,
+      "started_at": "2026-02-24T16:21:56.861490",
+      "last_error": "Skill not found: operations_skill",
+      "next_retry": "2026-02-24T16:21:56.885345"
+    },
+    {
+      "description": "Test task",
+      "metadata": {},
+      "priority": 2,
+      "source": "api",
+      "id": "task_20260224162248_3",
+      "status": "pending",
+      "created_at": "2026-02-24T16:22:48.801042",
+      "retry_count": 0,
+      "max_retries": 3
+    }
+  ],
+  "last_updated": "2026-02-24T16:22:48.801053",
+  "system_status": "running"
+}

@@ -1,0 +1,18 @@
+2026/02/25-15:36:33.804 1ea0 Reusing MANIFEST D:\Hacthon 0\AI_Employee_Vault\AI_Employee\Integrations\WhatsApp\whatsapp_session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/02/25-15:36:33.805 1ea0 Recovering log #515
+2026/02/25-15:36:33.882 1ea0 Reusing old log D:\Hacthon 0\AI_Employee_Vault\AI_Employee\Integrations\WhatsApp\whatsapp_session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000515.log 
+2026/02/25-15:36:35.450 1ea0 Level-0 table #523: started
+2026/02/25-15:36:35.487 1ea0 Level-0 table #523: 1034556 bytes OK
+2026/02/25-15:36:35.492 1ea0 Delete type=0 #515
+2026/02/25-15:36:35.811 1ea0 Compacting 1@1 + 4@2 files
+2026/02/25-15:36:35.965 1ea0 Generated table #524@1: 70932 keys, 2241629 bytes
+2026/02/25-15:36:36.088 1ea0 Generated table #525@1: 50153 keys, 2215139 bytes
+2026/02/25-15:36:36.161 1ea0 Generated table #526@1: 17022 keys, 2178929 bytes
+2026/02/25-15:36:36.240 1ea0 Generated table #527@1: 29029 keys, 2020747 bytes
+2026/02/25-15:36:36.240 1ea0 Compacted 1@1 + 4@2 files => 8656444 bytes
+2026/02/25-15:36:36.243 1ea0 compacted to: files[ 0 0 7 0 0 0 0 ]
+2026/02/25-15:36:36.244 1ea0 Delete type=2 #517
+2026/02/25-15:36:36.244 1ea0 Delete type=2 #518
+2026/02/25-15:36:36.244 1ea0 Delete type=2 #519
+2026/02/25-15:36:36.244 1ea0 Delete type=2 #520
+2026/02/25-15:36:36.245 1ea0 Delete type=2 #523

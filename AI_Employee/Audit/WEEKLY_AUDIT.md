@@ -1,0 +1,376 @@
+# Weekly Audit Engine - Documentation
+
+## Overview
+
+The Weekly Audit Engine automatically generates comprehensive executive reports by pulling data from all AI Employee systems:
+
+- Social media metrics
+- Gmail statistics  
+- WhatsApp activity
+- Task processing logs
+
+**Output:** Professional executive reports in `Audits/Weekly_Audit_Report.md` and `Audits/CEO_Briefing.md`
+
+---
+
+## File Structure
+
+```
+Audit/
+└── weekly_report.py      # Main audit engine
+```
+
+**Generated Reports:**
+- `Audits/Weekly_Audit_Report.md` - Full detailed report
+- `Audits/CEO_Briefing.md` - Condensed executive briefing
+
+---
+
+## Usage
+
+### Basic Usage
+
+```python
+from Audit.weekly_report import WeeklyAuditEngine
+
+# Create engine
+engine = WeeklyAuditEngine()
+
+# Generate report for last 7 days (default)
+report = engine.generate_report()
+
+# Generate for specific date range
+from datetime import datetime
+report = engine.generate_report(
+    week_start=datetime(2026, 2, 17),
+    week_end=datetime(2026, 2, 24)
+)
+
+# Access report data
+print(report['key_metrics'])
+print(report['executive_summary'])
+```
+
+### Command Line
+
+```powershell
+cd "D:\Hacthon 0\AI_Employee_Vault\AI_Employee"
+python Audit\weekly_report.py
+```
+
+---
+
+## Data Sources
+
+### 1. Social Media Metrics
+**File:** `Data/weekly_metrics.json`
+
+**Pulled Data:**
+- Total posts per week
+- Posts by platform (LinkedIn, Twitter, Facebook, Instagram)
+- Post content and timestamps
+- Engagement metrics (when available)
+
+### 2. Email Statistics
+**Files:** `Data/inbound_requests.json`, `Logs/skills_audit.json`, Gmail MCP
+
+**Pulled Data:**
+- Total emails processed
+- Current unread count
+- Emails by category (inquiry, complaint, praise, etc.)
+- Responses sent
+
+### 3. WhatsApp Activity
+**Files:** `Data/inbound_requests.json`, `Logs/skills_audit.json`
+
+**Pulled Data:**
+- Total messages received
+- Unique contacts
+- Messages by category
+- Messages sent
+
+### 4. Task Processing
+**Files:** `Logs/ralph_decisions.json`, `Logs/ralph_task_history.json`
+
+**Pulled Data:**
+- Total tasks processed
+- Completed vs failed
+- Multi-step tasks detected
+- Retry counts
+- Average task duration
+- Pending items count
+
+---
+
+## Report Sections
+
+### Executive Summary
+Auto-generated paragraph summarizing:
+- Total tasks processed
+- Social media activity level
+- Email and WhatsApp volumes
+- Key attention areas
+
+### Key Metrics at a Glance
+| Metric | Description |
+|--------|-------------|
+| Task Success Rate | Percentage of successfully completed tasks |
+| Social Media Posts | Total posts across all platforms |
+| Emails Processed | Inbound emails handled |
+| WhatsApp Messages | Inbound messages received |
+| Avg Task Duration | Average execution time |
+| Issues Identified | Number of operational issues |
+
+### Social Media Performance
+- Total posts and platform breakdown
+- Recent posts table
+- Activity analysis
+
+### Email Communications
+- Processing statistics
+- Current unread backlog
+- Categorization breakdown
+
+### WhatsApp Activity
+- Message statistics
+- Unique contacts count
+- Category breakdown
+
+### Task Processing
+- Volume metrics
+- Success/failure rates
+- Multi-step task count
+- Pending items backlog
+
+### Operational Issues
+AI-identified issues with:
+- Severity level (HIGH/MEDIUM/LOW)
+- Area affected
+- Issue description
+- Business impact
+
+### Recommendations
+Actionable recommendations with:
+- Priority level
+- Area of improvement
+- Expected impact
+- Effort estimate
+
+### Inbound Leads Summary
+- Total inquiries count
+- Breakdown by channel
+- Sales-related messages
+
+### Next Week Priorities
+Top 3 focus areas based on analysis
+
+---
+
+## Issue Detection
+
+The engine automatically identifies these issues:
+
+| Issue | Threshold | Severity |
+|-------|-----------|----------|
+| High email backlog | >50 unread | HIGH |
+| Moderate email backlog | >20 unread | MEDIUM |
+| High task failure rate | >20% | HIGH |
+| Low social activity | <3 posts/week | LOW |
+| Large pending backlog | >30 items | MEDIUM |
+
+---
+
+## Recommendation Generation
+
+Recommendations are generated based on:
+
+| Condition | Recommendation |
+|-----------|----------------|
+| Email backlog >20 | Implement auto-responders |
+| Email backlog >20 | Set up filtering rules |
+| Social posts <5 | Increase posting frequency |
+| Task failures >0 | Review failed patterns |
+| WhatsApp messages >10 | Create template responses |
+
+---
+
+## Report Format
+
+### Professional Executive Tone
+
+The report uses:
+- Formal business language
+- Clear section headers
+- Tabular data presentation
+- Actionable recommendations
+- Impact statements
+
+### Markdown Structure
+
+```markdown
+# Weekly Audit Report
+
+**Generated:** [timestamp]
+**Period:** Week [N] ([start] to [end])
+
+## Executive Summary
+[Auto-generated paragraph]
+
+## Key Metrics at a Glance
+| Metric | Value |
+|--------|-------|
+| ... | ... |
+
+## [Section]
+[Content with tables and analysis]
+
+---
+
+*Generated by AI Employee Vault - Weekly Audit Engine*
+*Report Classification: Internal Executive Use*
+```
+
+---
+
+## Scheduling
+
+### Run Weekly (PowerShell Scheduled Task)
+
+```powershell
+$action = New-ScheduledTaskAction -Execute "python" `
+  -Argument "Audit\weekly_report.py" `
+  -WorkingDirectory "D:\Hacthon 0\AI_Employee_Vault\AI_Employee"
+
+$trigger = New-ScheduledTaskTrigger -Weekly -At 9am -DaysOfWeek Monday
+
+Register-ScheduledTask -TaskName "AI_Employee_Weekly_Audit" `
+  -Action $action -Trigger $trigger -User "SYSTEM"
+```
+
+### Run with RALPH Loop
+
+```python
+from Core.ralph_loop import RALPHLoop, TaskPriority
+from Audit.weekly_report import WeeklyAuditEngine
+
+# Add weekly audit task
+loop = RALPHLoop()
+loop.add_task(
+    "Generate weekly audit report",
+    metadata={'skill': 'audit', 'action': 'weekly_report'},
+    priority=TaskPriority.NORMAL
+)
+```
+
+---
+
+## Customization
+
+### Add New Data Sources
+
+```python
+class WeeklyAuditEngine:
+    def _pull_custom_metrics(self, week_start, week_end):
+        """Pull from custom data source."""
+        try:
+            # Your custom logic here
+            self.data['custom'] = {
+                'metric1': value1,
+                'metric2': value2
+            }
+        except Exception as e:
+            logger.error(f"Failed to pull custom metrics: {e}")
+```
+
+### Modify Issue Thresholds
+
+```python
+def _analyze_issues(self):
+    # Custom thresholds
+    if email_unread > 100:  # Changed from 50
+        issues.append({...})
+```
+
+### Add Custom Recommendations
+
+```python
+def _generate_recommendations(self):
+    # Your custom logic
+    if self.data['custom']['metric'] < threshold:
+        recommendations.append({
+            'priority': 'HIGH',
+            'area': 'Custom Area',
+            'recommendation': 'Do something specific',
+            'expected_impact': 'Measurable improvement',
+            'effort': 'Low'
+        })
+```
+
+---
+
+## Example Output
+
+See generated reports:
+- `Audits/Weekly_Audit_Report.md` - Full report
+- `Audits/CEO_Briefing.md` - Executive summary
+
+---
+
+## Troubleshooting
+
+### No Data in Report
+- Check that data files exist in `Data/` and `Logs/`
+- Verify date range covers existing data
+- Run some tasks first to generate data
+
+### Gmail Connection Error
+- Ensure `credentials.json` exists in `Integrations/Gmail/`
+- Check internet connection
+- Verify OAuth token is valid
+
+### Report Not Generated
+- Check `Audits/` directory permissions
+- Ensure Python has write access
+- Check logs for specific errors
+
+---
+
+## API Reference
+
+### WeeklyAuditEngine
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| `generate_report()` | `week_start`, `week_end` | `Dict` | Generate full report |
+| `_pull_social_metrics()` | `week_start`, `week_end` | `None` | Pull social data |
+| `_pull_email_statistics()` | `week_start`, `week_end` | `None` | Pull email data |
+| `_pull_whatsapp_activity()` | `week_start`, `week_end` | `None` | Pull WhatsApp data |
+| `_pull_task_statistics()` | `week_start`, `week_end` | `None` | Pull task data |
+| `_analyze_issues()` | - | `None` | Identify issues |
+| `_generate_recommendations()` | - | `None` | Generate recommendations |
+
+### Report Structure
+
+```python
+{
+    'report_date': str,
+    'period': {
+        'start': str,
+        'end': str,
+        'week_number': int
+    },
+    'executive_summary': str,
+    'social_media': Dict,
+    'email_communications': Dict,
+    'whatsapp_activity': Dict,
+    'task_processing': Dict,
+    'operational_issues': List[Dict],
+    'recommendations': List[Dict],
+    'key_metrics': Dict
+}
+```
+
+---
+
+*Last Updated: February 24, 2026*
+*Version: Gold Tier v1.0*
