@@ -1,0 +1,18 @@
+# AI Employee Vault - Dashboard Backend Requirements
+# Install with: pip install -r requirements.txt
+
+# Web Framework
+fastapi==0.104.1
+uvicorn==0.23.2
+
+# Validation (v1.x doesn't require Rust)
+pydantic==1.10.13
+
+# HTTP Client (for external API calls)
+httpx==0.24.1
+
+# CORS support (included with FastAPI)
+python-multipart==0.0.6
+
+# Optional: For production deployment
+# gunicorn==21.2.0

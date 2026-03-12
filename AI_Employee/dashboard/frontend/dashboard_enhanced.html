@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Employee Vault - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <style>
+        /* Base Dark Theme */
+        :root {
+            --bg-primary: #0f1115;
+            --bg-secondary: #1a1d24;
+            --bg-card: #1e222b;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-magenta: #ec4899;
+            --accent-green: #10b981;
+            --accent-gold: #f59e0b;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border-color: #2d3342;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(30, 34, 43, 0.9) 0%, rgba(26, 29, 36, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card-hover:hover {
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.15);
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Glowing Effects */
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
+                        0 0 40px rgba(0, 212, 255, 0.3),
+                        inset 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .glow-purple {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5),
+                        0 0 40px rgba(168, 85, 247, 0.3);
+        }
+
+        .glow-green {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Light Beam Effect */
+        .light-beam {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 400px;
+            background: linear-gradient(180deg, 
+                transparent 0%,
+                rgba(0, 212, 255, 0.8) 20%,
+                rgba(245, 158, 11, 0.6) 50%,
+                rgba(0, 212, 255, 0.8) 80%,
+                transparent 100%
+            );
+            filter: blur(8px);
+            animation: beamPulse 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes beamPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background: linear-gradient(180deg, #1a1d24 0%, #0f1115 100%);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .nav-item {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: var(--accent-cyan);
+            transition: height 0.3s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-item:hover::before,
+        .nav-item.active::before {
+            height: 70%;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 212, 255, 0.08);
+            color: var(--accent-cyan);
+        }
+
+        .nav-item.active {
+            background: rgba(0, 212, 255, 0.12);
+            color: var(--accent-cyan);
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Status Indicators */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.green {
+            background: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        .status-dot.red {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+
+        /* Button Styles */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-glow:hover::before {
+            left: 100%;
+        }
+
+        /* Input Styles */
+        .input-dark {
+            background: rgba(15, 17, 21, 0.6);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .input-dark:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+            outline: none;
+        }
+
+        /* Avatar */
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-cyan);
+        }
+
+        /* Sparkline Container */
+        .sparkline {
+            height: 40px;
+            width: 100%;
+        }
+
+        /* Team Member Status */
+        .team-member {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .team-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Log Entry */
+        .log-entry {
+            font-family: 'Consolas', monospace;
+            font-size: 0.75rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flex">
+        <!-- Left Sidebar -->
+        <aside class="sidebar w-64 min-h-screen fixed left-0 top-0 z-50">
+            <div class="p-6">
+                <!-- Logo -->
+                <div class="flex items-center mb-10">
+                    <div class="w-10 h-10 rounded-lg glow-cyan flex items-center justify-center mr-3">
+                        <i class="fas fa-robot text-cyan-400"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg text-white">AI Employee</h1>
+                        <p class="text-xs text-gray-500">Vault Dashboard</p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="space-y-1">
+                    <a href="#dashboard" class="nav-item active flex items-center px-4 py-3 rounded-lg text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-th-large w-6"></i>
+                        <span class="ml-3">Dashboard</span>
+                    </a>
+                    <a href="#watchers" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-eye w-6"></i>
+                        <span class="ml-3">Watchers</span>
+                    </a>
+                    <a href="#messaging" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-comments w-6"></i>
+                        <span class="ml-3">Messaging</span>
+                    </a>
+                    <a href="#social" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-share-alt w-6"></i>
+                        <span class="ml-3">Social Media</span>
+                    </a>
+                    <a href="#ai" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-brain w-6"></i>
+                        <span class="ml-3">AI Generator</span>
+                    </a>
+                    <a href="#logs" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-400 hover:text-white transition-all">
+                        <i class="fas fa-file-code w-6"></i>
+                        <span class="ml-3">Logs</span>
+                    </a>
+                </nav>
+
+                <!-- Bottom Section -->
+                <div class="absolute bottom-0 left-0 right-0 p-6">
+                    <div class="glass-card rounded-xl p-4 mb-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs text-gray-400">System Status</span>
+                            <span class="status-dot green"></span>
+                        </div>
+                        <p class="text-sm text-white font-semibold">All Systems Operational</p>
+                    </div>
+                    <a href="index.html" class="flex items-center text-gray-500 hover:text-cyan-400 transition-colors text-sm">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="ml-64 flex-1 min-h-screen">
+            <!-- Top Header -->
+            <header class="sticky top-0 z-40 glass-card border-b border-gray-800">
+                <div class="flex items-center justify-between px-8 py-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Dashboard</h2>
+                        <p class="text-sm text-gray-500 mt-1">Welcome back! Here's your automation overview</p>
+                    </div>
+                    <div class="light-beam"></div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Branch Selector -->
+                        <select class="input-dark rounded-lg px-4 py-2 text-sm">
+                            <option value="main">🌿 main</option>
+                            <option value="develop">🔧 develop</option>
+                            <option value="feature">✨ feature</option>
+                        </select>
+
+                        <!-- Dark/Light Toggle -->
+                        <button onclick="toggleTheme()" class="w-10 h-10 rounded-lg glass-card hover:bg-gray-700 transition-all flex items-center justify-center">
+                            <i class="fas fa-moon text-gray-400"></i>
+                        </button>
+
+                        <!-- Notifications -->
+                        <button class="w-10 h-10 rounded-lg glass-card hover:bg-gray-700 transition-all flex items-center justify-center relative">
+                            <i class="fas fa-bell text-gray-400"></i>
+                            <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full glow-green"></span>
+                        </button>
+
+                        <!-- User Avatar -->
+                        <div class="flex items-center space-x-3 pl-4 border-l border-gray-700">
+                            <img src="https://ui-avatars.com/api/?name=Admin&background=00d4ff&color=fff" alt="User" class="avatar">
+                            <div class="hidden lg:block">
+                                <p class="text-sm font-semibold text-white">Admin User</p>
+                                <p class="text-xs text-gray-500">Super Admin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="p-8">
+                <!-- Welcome Card -->
+                <div class="glass-card rounded-2xl p-8 mb-8 glow-cyan animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-3xl font-bold text-white mb-2">
+                                Welcome, <span class="gradient-text">Admin</span>! 👋
+                            </h3>
+                            <p class="text-gray-400 text-lg">Let's automate your day with AI-powered efficiency</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-right">
+                                <p class="text-sm text-gray-400">System Uptime</p>
+                                <p class="text-2xl font-bold text-cyan-400">99.9%</p>
+                            </div>
+                            <div class="w-16 h-16 rounded-full glow-cyan flex items-center justify-center">
+                                <i class="fas fa-chart-line text-2xl text-cyan-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metric Cards Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Email Watcher Card -->
+                    <div class="glass-card rounded-xl p-6 metric-card glass-card-hover animate-slide-in">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center">
+                                    <i class="fas fa-envelope text-red-400 text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">Email Watcher</p>
+                                    <p class="text-2xl font-bold text-white">2,040</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-green-400 flex items-center">
+                                <i class="fas fa-arrow-up mr-1"></i>12%
+                            </span>
+                        </div>
+                        <canvas id="emailSparkline" class="sparkline"></canvas>
+                    </div>
+
+                    <!-- WhatsApp Messages Card -->
+                    <div class="glass-card rounded-xl p-6 metric-card glass-card-hover animate-slide-in" style="animation-delay: 0.1s">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                    <i class="fab fa-whatsapp text-green-400 text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">WhatsApp</p>
+                                    <p class="text-2xl font-bold text-white">158</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-green-400 flex items-center">
+                                <i class="fas fa-arrow-up mr-1"></i>8%
+                            </span>
+                        </div>
+                        <canvas id="whatsappSparkline" class="sparkline"></canvas>
+                    </div>
+
+                    <!-- Automated Tasks Card -->
+                    <div class="glass-card rounded-xl p-6 metric-card glass-card-hover animate-slide-in" style="animation-delay: 0.2s">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                                    <i class="fas fa-robot text-purple-400 text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">Auto Tasks</p>
+                                    <p class="text-2xl font-bold text-white">72K</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-green-400 flex items-center">
+                                <i class="fas fa-arrow-up mr-1"></i>24%
+                            </span>
+                        </div>
+                        <canvas id="tasksSparkline" class="sparkline"></canvas>
+                    </div>
+
+                    <!-- Errors Logged Card -->
+                    <div class="glass-card rounded-xl p-6 metric-card glass-card-hover animate-slide-in" style="animation-delay: 0.3s">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-400">Errors</p>
+                                    <p class="text-2xl font-bold text-white">3</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-red-400 flex items-center">
+                                <i class="fas fa-arrow-down mr-1"></i>2%
+                            </span>
+                        </div>
+                        <canvas id="errorsSparkline" class="sparkline"></canvas>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Main Graph (2 columns) -->
+                    <div class="lg:col-span-2 glass-card rounded-xl p-6 animate-fade-in">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Work Progress Overview</h3>
+                                <p class="text-sm text-gray-400">Tasks completed vs messages sent</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center space-x-2">
+                                    <span class="status-dot" style="background: var(--accent-cyan)"></span>
+                                    <span class="text-xs text-gray-400">Tasks Done</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="status-dot" style="background: var(--accent-purple)"></span>
+                                    <span class="text-xs text-gray-400">Messages Sent</span>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="mainChart" height="80"></canvas>
+                    </div>
+
+                    <!-- Right Sidebar Control Panel -->
+                    <div class="space-y-6">
+                        <!-- Calendar Widget -->
+                        <div class="glass-card rounded-xl p-6 animate-slide-in">
+                            <h3 class="text-lg font-bold text-white mb-4">
+                                <i class="fas fa-calendar-alt mr-2 text-cyan-400"></i>
+                                Schedule
+                            </h3>
+                            <div class="text-center mb-4">
+                                <p class="text-4xl font-bold text-white" id="current-date">15</p>
+                                <p class="text-sm text-gray-400">March 2026</p>
+                            </div>
+                            <div class="grid grid-cols-7 gap-2 text-center text-xs">
+                                <div class="text-gray-500">S</div>
+                                <div class="text-gray-500">M</div>
+                                <div class="text-gray-500">T</div>
+                                <div class="text-gray-500">W</div>
+                                <div class="text-gray-500">T</div>
+                                <div class="text-gray-500">F</div>
+                                <div class="text-gray-500">S</div>
+                                <!-- Calendar days would be generated dynamically -->
+                                <div class="text-gray-600 py-2">28</div>
+                                <div class="text-gray-600 py-2">29</div>
+                                <div class="text-gray-600 py-2">1</div>
+                                <div class="text-gray-600 py-2">3</div>
+                                <div class="bg-cyan-500/20 text-cyan-400 py-2 rounded">4</div>
+                                <div class="text-gray-600 py-2">5</div>
+                                <div class="text-gray-600 py-2">6</div>
+                            </div>
+                        </div>
+
+                        <!-- Meeting/Event List -->
+                        <div class="glass-card rounded-xl p-6 animate-slide-in" style="animation-delay: 0.1s">
+                            <h3 class="text-lg font-bold text-white mb-4">
+                                <i class="fas fa-video mr-2 text-purple-400"></i>
+                                Today's Events
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 p-3 rounded-lg bg-gray-800/50">
+                                    <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                                        <i class="fab fa-google text-red-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-semibold text-white">Team Standup</p>
+                                        <p class="text-xs text-gray-400">9:00 AM - Google Meet</p>
+                                        <div class="flex -space-x-2 mt-2">
+                                            <img src="https://ui-avatars.com/api/?name=John&background=random" class="w-6 h-6 rounded-full border-2 border-gray-800">
+                                            <img src="https://ui-avatars.com/api/?name=Sarah&background=random" class="w-6 h-6 rounded-full border-2 border-gray-800">
+                                            <img src="https://ui-avatars.com/api/?name=Mike&background=random" class="w-6 h-6 rounded-full border-2 border-gray-800">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 p-3 rounded-lg bg-gray-800/50">
+                                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-robot text-purple-400"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-sm font-semibold text-white">AI Training Session</p>
+                                        <p class="text-xs text-gray-400">2:00 PM - Virtual</p>
+                                        <div class="flex -space-x-2 mt-2">
+                                            <img src="https://ui-avatars.com/api/?name=Alex&background=random" class="w-6 h-6 rounded-full border-2 border-gray-800">
+                                            <span class="w-6 h-6 rounded-full bg-gray-700 border-2 border-gray-800 flex items-center justify-center text-xs text-gray-400">+3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lower Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Team Member Availability -->
+                    <div class="glass-card rounded-xl p-6 animate-fade-in">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-white">
+                                <i class="fas fa-users mr-2 text-green-400"></i>
+                                Team Availability
+                            </h3>
+                            <button class="text-xs text-cyan-400 hover:text-cyan-300">View All</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="team-member">
+                                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=10b981&color=fff" class="team-avatar">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-white">Sarah Johnson</p>
+                                    <p class="text-xs text-gray-400">Lead Developer</p>
+                                </div>
+                                <span class="status-dot green"></span>
+                            </div>
+                            <div class="team-member">
+                                <img src="https://ui-avatars.com/api/?name=Mike+Chen&background=a855f7&color=fff" class="team-avatar">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-white">Mike Chen</p>
+                                    <p class="text-xs text-gray-400">DevOps Engineer</p>
+                                </div>
+                                <span class="status-dot green"></span>
+                            </div>
+                            <div class="team-member">
+                                <img src="https://ui-avatars.com/api/?name=Emma+Wilson&background=ec4899&color=fff" class="team-avatar">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-white">Emma Wilson</p>
+                                    <p class="text-xs text-gray-400">Product Manager</p>
+                                </div>
+                                <span class="status-dot red"></span>
+                            </div>
+                            <div class="team-member">
+                                <img src="https://ui-avatars.com/api/?name=Alex+Brown&background=00d4ff&color=fff" class="team-avatar">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-white">Alex Brown</p>
+                                    <p class="text-xs text-gray-400">AI Specialist</p>
+                                </div>
+                                <span class="status-dot green"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Logs -->
+                    <div class="glass-card rounded-xl p-6 animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-white">
+                                <i class="fas fa-terminal mr-2 text-cyan-400"></i>
+                                Recent Logs
+                            </h3>
+                            <button class="text-xs text-cyan-400 hover:text-cyan-300">View All</button>
+                        </div>
+                        <div class="space-y-2 max-h-64 overflow-auto">
+                            <div class="log-entry flex items-center justify-between">
+                                <span class="text-green-400">[SUCCESS]</span>
+                                <span class="text-gray-400">Email sent to client@example.com</span>
+                                <span class="text-gray-600">2m ago</span>
+                            </div>
+                            <div class="log-entry flex items-center justify-between">
+                                <span class="text-cyan-400">[INFO]</span>
+                                <span class="text-gray-400">WhatsApp watcher started</span>
+                                <span class="text-gray-600">5m ago</span>
+                            </div>
+                            <div class="log-entry flex items-center justify-between">
+                                <span class="text-purple-400">[TASK]</span>
+                                <span class="text-gray-400">Task #1234 completed</span>
+                                <span class="text-gray-600">12m ago</span>
+                            </div>
+                            <div class="log-entry flex items-center justify-between">
+                                <span class="text-yellow-400">[WARN]</span>
+                                <span class="text-gray-400">Rate limit approaching</span>
+                                <span class="text-gray-600">25m ago</span>
+                            </div>
+                            <div class="log-entry flex items-center justify-between">
+                                <span class="text-green-400">[SUCCESS]</span>
+                                <span class="text-gray-400">Instagram DM sent to @user</span>
+                                <span class="text-gray-600">1h ago</span>
+                            </div>
+                            <div class="log-entry flex items-center justify-between">
+                                <span class="text-red-400">[ERROR]</span>
+                                <span class="text-gray-400">Connection timeout</span>
+                                <span class="text-gray-600">2h ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // Set current date
+        const now = new Date();
+        document.getElementById('current-date').textContent = now.getDate();
+
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sparkline charts
+            const sparklineConfig = {
+                type: 'line',
+                data: {
+                    labels: ['1', '2', '3', '4', '5', '6', '7'],
+                    datasets: [{
+                        data: [12, 19, 15, 25, 22, 30, 28],
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            };
+
+            new Chart(document.getElementById('emailSparkline'), {
+                ...sparklineConfig,
+                data: {
+                    ...sparklineConfig.data,
+                    datasets: [{ ...sparklineConfig.data.datasets[0], borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)' }]
+                }
+            });
+
+            new Chart(document.getElementById('whatsappSparkline'), {
+                ...sparklineConfig,
+                data: {
+                    ...sparklineConfig.data,
+                    datasets: [{ ...sparklineConfig.data.datasets[0], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)' }]
+                }
+            });
+
+            new Chart(document.getElementById('tasksSparkline'), {
+                ...sparklineConfig,
+                data: {
+                    ...sparklineConfig.data,
+                    datasets: [{ ...sparklineConfig.data.datasets[0], borderColor: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.1)' }]
+                }
+            });
+
+            new Chart(document.getElementById('errorsSparkline'), {
+                ...sparklineConfig,
+                data: {
+                    ...sparklineConfig.data,
+                    datasets: [{ ...sparklineConfig.data.datasets[0], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)' }]
+                }
+            });
+
+            // Main Chart
+            new Chart(document.getElementById('mainChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Tasks Done',
+                            data: [65, 78, 80, 85, 92, 88, 95],
+                            borderColor: '#00d4ff',
+                            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Messages Sent',
+                            data: [45, 52, 60, 68, 75, 70, 82],
+                            borderColor: '#a855f7',
+                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
